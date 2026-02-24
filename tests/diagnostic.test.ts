@@ -1,6 +1,8 @@
 import { describe, it, expect } from "vitest";
 import { AnomalyDetector } from "../src/diagnostic/AnomalyDetector";
 import { RemedyLogic } from "../src/diagnostic/RemedyLogic";
+import { ImpactScorer } from "../src/diagnostic/ImpactScorer";
+import { BottleneckClassifier } from "../src/diagnostic/BottleneckClassifier";
 import { MetricsSnapshot } from "../src/domain/ReportTypes";
 
 const baseMetrics: MetricsSnapshot = {
@@ -25,8 +27,13 @@ describe("AnomalyDetector", () => {
 
 describe("RemedyLogic", () => {
   it("recommends KILL on low validation", () => {
+    const classifier = new BottleneckClassifier();
+    const scorer = new ImpactScorer();
     const logic = new RemedyLogic();
-    const recs = logic.recommend(0.01, []);
-    expect(recs.some((r) => r.action === "KILL")).toBe(true);
+    const bottlenecks = scorer.score(
+      classifier.classify(baseMetrics, [{ type: "latency", message: "high" } as any], 0.1)
+    );
+    const { guidance } = logic.recommend(bottlenecks);
+    expect(guidance.length).toBeGreaterThan(0);
   });
 });

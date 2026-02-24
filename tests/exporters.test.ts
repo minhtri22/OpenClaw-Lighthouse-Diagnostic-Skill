@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { MarkdownGenerator } from "../src/exporters/MarkdownGenerator";
 import { NotebookLMPack } from "../src/exporters/NotebookLMPack";
-import { DiagnosticReport, ResearchPack } from "../src/domain/ReportTypes";
+import { DiagnosticReport, ResearchPack, Bottleneck, Guidance } from "../src/domain/ReportTypes";
 import { promises as fs } from "fs";
 import path from "path";
 
@@ -23,7 +23,28 @@ describe("MarkdownGenerator", () => {
       anomalies: [],
       recommendations: [{ action: "MAINTAIN", reason: "Within thresholds" }],
     };
-    const md = gen.diagnostic(report);
+    const bottlenecks: Bottleneck[] = [
+      {
+        type: "TOKEN_INFLATION",
+        severity: 0.7,
+        impactScore: 0.8,
+        costImpact: 10,
+        latencyImpact: 100,
+        frequency: 0.5,
+        explanation: "tokens high",
+        evidence: {},
+        suggestedFixes: ["trim"],
+      },
+    ];
+    const guidance: Guidance[] = [
+      {
+        explanation: "trim",
+        simulation: { tokenReductionPercent: 30, estimatedCostSavingUSD: 10, estimatedLatencyReductionMs: 50 },
+        aiQuestions: ["q1"],
+        implementationChecklist: ["c1"],
+      },
+    ];
+    const md = gen.diagnostic(report, bottlenecks, guidance, []);
     expect(md).toContain("Lighthouse Diagnostic Report");
   });
 });
@@ -38,9 +59,30 @@ describe("NotebookLMPack", () => {
       pains: ["slow", "cost"],
       productDNA: { key: "value" },
     };
-    const filePath = await exporter.export(pack);
+    const bottlenecks: Bottleneck[] = [
+      {
+        type: "TOKEN_INFLATION",
+        severity: 0.7,
+        impactScore: 0.8,
+        costImpact: 10,
+        latencyImpact: 100,
+        frequency: 0.5,
+        explanation: "tokens high",
+        evidence: {},
+        suggestedFixes: ["trim"],
+      },
+    ];
+    const guidance: Guidance[] = [
+      {
+        explanation: "trim",
+        simulation: { tokenReductionPercent: 30, estimatedCostSavingUSD: 10, estimatedLatencyReductionMs: 50 },
+        aiQuestions: ["q1"],
+        implementationChecklist: ["c1"],
+      },
+    ];
+    const filePath = await exporter.export(pack, bottlenecks, guidance, []);
     const exists = await fs.stat(path.resolve(filePath));
-    expect(exists.isFile()).toBe(true);
+    expect(exists.isDirectory()).toBe(true);
     await fs.rm(".tmp-reports", { recursive: true, force: true });
   });
 });

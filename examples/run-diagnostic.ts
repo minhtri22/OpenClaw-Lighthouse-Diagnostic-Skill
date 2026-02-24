@@ -1,4 +1,4 @@
-import { createLighthouse } from "../src";
+import { createLighthouse, Bottleneck } from "../src";
 
 async function main() {
   const lighthouse = createLighthouse();
@@ -15,10 +15,14 @@ async function main() {
   });
 
   const anomalies = lighthouse.anomalyDetector.detect(metrics, 0.07);
-  const recs = lighthouse.remedy.recommend(0.07, anomalies);
+  const retryRate = 0.1;
+  let bottlenecks: Bottleneck[] = lighthouse.classifier.classify(metrics, anomalies, retryRate);
+  bottlenecks = lighthouse.scorer.score(bottlenecks);
+  const { recs, guidance } = lighthouse.remedy.recommend(bottlenecks);
+  const plan = lighthouse.planBuilder();
 
   const report = { metrics, anomalies, recommendations: recs };
-  const md = lighthouse.md.diagnostic(report);
+  const md = lighthouse.md.diagnostic(report, bottlenecks, guidance, plan);
 
   console.log(md);
 }

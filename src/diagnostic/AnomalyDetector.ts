@@ -17,7 +17,7 @@ export class AnomalyDetector {
         message: `Latency high: ${metrics.avgResponseTimeMs}ms > ${this.thresholds.latencyMs}ms`,
       });
     }
-    if (metrics.tokenThroughputPerMin > metrics.tokenThroughputPerMin * this.thresholds.tokenSpikeMultiplier) {
+    if (metrics.tokenThroughputPerMin > 100 * this.thresholds.tokenSpikeMultiplier) {
       flags.push({
         type: "token_spike",
         message: "Token spike detected",

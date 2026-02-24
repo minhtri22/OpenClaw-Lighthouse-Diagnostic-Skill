@@ -1,29 +1,16 @@
-import { AnomalyFlag, RemedyRecommendation } from "../domain/ReportTypes";
+import { Bottleneck, Guidance, RemedyRecommendation } from "../domain/ReportTypes";
+import { GuidanceEngine } from "./GuidanceEngine";
 
 export class RemedyLogic {
-  recommend(validationScore: number | undefined, anomalies: AnomalyFlag[]): RemedyRecommendation[] {
-    const recs: RemedyRecommendation[] = [];
+  private guidance = new GuidanceEngine();
 
-    const hasLatency = anomalies.some((a) => a.type === "latency");
-    const hasTokenSpike = anomalies.some((a) => a.type === "token_spike");
-    const validationLow = validationScore !== undefined && validationScore < 0.05;
-
-    if (validationLow) {
-      recs.push({ action: "KILL", reason: "validationScore below 0.05" });
-    }
-
-    if (hasTokenSpike) {
-      recs.push({ action: "KILL", reason: "Token spike detected; trigger circuit breaker" });
-    }
-
-    if (hasLatency && !validationLow) {
-      recs.push({ action: "MAINTAIN", reason: "High latency; inspect GPU/queue before scaling" });
-    }
-
-    if (!recs.length) {
-      recs.push({ action: "MAINTAIN", reason: "Within thresholds" });
-    }
-
-    return recs;
+  recommend(bottlenecks: Bottleneck[]): { recs: RemedyRecommendation[]; guidance: Guidance[] } {
+    const sorted = [...bottlenecks].sort((a, b) => b.impactScore - a.impactScore);
+    const recs: RemedyRecommendation[] = sorted.slice(0, 3).map((b) => ({
+      action: "MAINTAIN",
+      reason: `Focus on ${b.type}: ${b.explanation}`,
+    }));
+    const guidance = sorted.slice(0, 3).map((b) => this.guidance.generate(b, b.costImpact, b.latencyImpact));
+    return { recs, guidance };
   }
 }
