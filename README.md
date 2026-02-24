@@ -1,8 +1,54 @@
 # OpenClaw Lighthouse Diagnostic Skill
 
-Standalone monitoring & diagnostic skill for OpenClaw. Zero-AI-guesswork: deterministic metrics, anomaly detection, and research packs for NotebookLM/community review.
+Deterministic diagnostic reporting engine for LLM runtime systems.
 
-Lighthouse is **post-execution analytics only**. It never blocks or enforces runtime budgets/concurrency; that is handled by the Financial Guardrail. Inputs are structured logs emitted by guardrails or apps.
+Lighthouse analyzes aggregated runtime metrics and produces a ranked, structured diagnostic report.
+
+It helps answer:
+
+Why did latency increase?
+
+Why is cost rising?
+
+Which bottlenecks have the highest impact?
+
+What should we investigate first?
+
+This is post-execution analytics only.
+It does not block traffic, enforce budgets, or mutate runtime behavior.
+
+What Problem This Solves
+
+When operating LLM systems in production, teams face:
+
+Latency spikes without clear root cause
+
+Token throughput instability
+
+Rising cost without structured explanation
+
+CPU and queue saturation
+
+Too many metrics, no prioritization
+
+Dashboards show data.
+They do not rank problems.
+
+Lighthouse converts aggregated metrics into:
+
+Detected anomalies
+
+Classified bottlenecks
+
+Impact scores
+
+Top-3 prioritized recommendations
+
+Structured guidance
+
+Self-debug plan
+
+Exportable Markdown report
 
 ## Quick Start
 - `npm install`
