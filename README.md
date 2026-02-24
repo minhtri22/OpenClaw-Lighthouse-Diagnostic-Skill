@@ -6,13 +6,13 @@ Lighthouse analyzes aggregated runtime metrics and produces a ranked, structured
 
 It helps answer:
 
-Why did latency increase?
+- `Why did latency increase?`
 
-Why is cost rising?
+- `Why is cost rising?`
 
-Which bottlenecks have the highest impact?
+- `Which bottlenecks have the highest impact?`
 
-What should we investigate first?
+- `What should we investigate first?`
 
 This is post-execution analytics only.
 It does not block traffic, enforce budgets, or mutate runtime behavior.
@@ -21,15 +21,15 @@ What Problem This Solves
 
 When operating LLM systems in production, teams face:
 
-Latency spikes without clear root cause
+- `Latency spikes without clear root cause`
 
-Token throughput instability
+- `Token throughput instability`
 
-Rising cost without structured explanation
+- `Rising cost without structured explanation`
 
-CPU and queue saturation
+- `CPU and queue saturation`
 
-Too many metrics, no prioritization
+- `Too many metrics, no prioritization`
 
 Dashboards show data.
 They do not rank problems.
