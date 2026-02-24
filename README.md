@@ -2,6 +2,8 @@
 
 Standalone monitoring & diagnostic skill for OpenClaw. Zero-AI-guesswork: deterministic metrics, anomaly detection, and research packs for NotebookLM/community review.
 
+Lighthouse is **post-execution analytics only**. It never blocks or enforces runtime budgets/concurrency; that is handled by the Financial Guardrail. Inputs are structured logs emitted by guardrails or apps.
+
 ## Quick Start
 - `npm install`
 - `npm run build`
@@ -26,6 +28,11 @@ const metrics = lh.metrics.collect({
 const anomalies = lh.anomalyDetector.detect(metrics, 0.07);
 const recs = lh.remedy.recommend(0.07, anomalies);
 ```
+
+## Log Ingestion Contract
+Consumes JSONL logs shaped as:
+`{ requestId, model, promptTokens, completionTokens, totalTokens, cost, latencyMs, environment, blocked, blockReason, timestamp }`
+Feed these to your own pipeline, then pass aggregates to Lighthouse analyzers. Lighthouse will not mutate or block traffic.
 
 ## How to Read Latency & Bottlenecks
 - `avgResponseTimeMs` > 30s: Local LLM or hardware queue likely congested; inspect GPU/queue first.
@@ -54,4 +61,4 @@ const recs = lh.remedy.recommend(0.07, anomalies);
 ## Constraints
 - Deterministic only: no AI heuristics for safety decisions.
 - Local-first: outputs to JSON/Markdown under `/reports`.
-- Read-only to core systems: does not mutate scoring/budget.
+- Read-only to core systems: does not mutate scoring/budget, does not enforce or block requests.
