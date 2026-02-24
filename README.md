@@ -36,19 +36,19 @@ They do not rank problems.
 
 Lighthouse converts aggregated metrics into:
 
-Detected anomalies
+- `Detected anomalies`
 
-Classified bottlenecks
+- `Classified bottlenecks`
 
-Impact scores
+- `Impact scores`
 
-Top-3 prioritized recommendations
+- `Top-3 prioritized recommendations`
 
-Structured guidance
+- `Structured guidance`
 
-Self-debug plan
+- `Self-debug plan`
 
-Exportable Markdown report
+- `Exportable Markdown report`
 
 ## Quick Start
 - `npm install`
